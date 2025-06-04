@@ -1,3 +1,4 @@
 info: Opening plain database via sqlite backend.
 info: No plain database available. Continuing with sqlite database.
 warning: document info: '/home/kronberger/Programming/typst/Labor-III/Labor-III-ESR/main.pdf' has an invalid page number
+Gdk-Message: 11:32:43.550: Error reading events from display: Broken pipe
