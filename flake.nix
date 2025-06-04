@@ -17,6 +17,7 @@
         default = pkgs.mkShell {
           buildInputs = [
             pkgs.zathura
+            pkgs.nushell
           ];
           shellHook = ''
             # Start zathura

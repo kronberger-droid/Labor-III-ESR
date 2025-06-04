@@ -1,6 +1,6 @@
 #import "lab-report.typ": lab-report
 #import "@preview/lilaq:0.3.0" as lq
-#import calc: ln, round
+#import calc: ln, round, sqrt
 #import "lib.typ": linear_fit
 
 #show: lab-report.with(
@@ -262,10 +262,6 @@ The experimental setup is shown in Fig. 4 and 5.
 == Measurement values
 
 #let freq_I2 = (
-  15,
-  20,
-  25,
-  30,
   30,
   35,
   40,
@@ -276,9 +272,8 @@ The experimental setup is shown in Fig. 4 and 5.
   65,
   70,
   75,
-  75,
   80,
-  85,
+  80,
   90,
   95,
   100,
@@ -286,64 +281,50 @@ The experimental setup is shown in Fig. 4 and 5.
   110,
   115,
   120,
-  125,
-  130,
 )
+
 #let I2 = (
-  0.26,
-  0.35,
-  0.44,
-  0.51,
-  0.51,
-  0.60,
-  0.69,
-  0.77,
-  0.86,
-  0.94,
-  1.00,
-  1.10,
-  1.20,
-  1.30,
-  1.30,
-  1.35,
-  1.45,
-  1.55,
-  1.60,
+  0.53,
+  0.63,
+  0.71,
+  0.79,
+  0.89,
+  0.97,
+  1.06,
+  1.15,
+  1.23,
+  1.33,
+  1.41,
+  1.53,
+  1.65,
+  1.67,
   1.70,
-  1.80,
-  1.90,
-  1.95,
-  2.00,
-  2.10,
-  2.20,
+  1.74,
+  1.79,
+  2.05,
+  2.16,
 )
+
 #let Coil = (
-  "klein",
-  "klein",
-  "klein",
-  "klein",
-  "mittel",
-  "mittel",
-  "mittel",
-  "mittel",
-  "mittel",
-  "mittel",
-  "mittel",
-  "mittel",
-  "mittel",
-  "mittel",
-  "groß",
-  "groß",
-  "groß",
-  "groß",
-  "groß",
-  "groß",
-  "groß",
-  "groß",
-  "groß",
-  "groß",
-  "groß",
-  "groß",
+  "middle",
+  "middle",
+  "middle",
+  "middle",
+  "middle",
+  "middle",
+  "middle",
+  "middle",
+  "middle",
+  "middle",
+  "middle",
+  "small",
+  "small",
+  "small",
+  "small",
+  "small",
+  "small",
+  "small",
+  "small",
 )
 
 #align(center)[
@@ -386,14 +367,37 @@ The experimental setup is shown in Fig. 4 and 5.
   height: 6cm,
   lq.plot(color: blue, mark-size: 6pt, stroke: none, B0, freq_B0),
 
-  lq.plot(color: blue, mark: none, stroke: 1.2pt, lq.linspace(0.5, 4.7), lq
-    .linspace(0.5, 4.7)
-    .map(x => x * lin_fit.first() + lin_fit.last())),
+  lq.plot(
+    color: blue,
+    mark: none,
+    stroke: 1.2pt,
+    lq.linspace(B0.first(), B0.last()),
+    lq
+      .linspace(B0.first(), B0.last())
+      .map(x => x * lin_fit.first() + lin_fit.last()),
+  ),
 ))
 
+#let delta_U = 1.9 * 0.5 // in cm * V/cm
+
+#let U_mod = 10 * 0.5 // in cm * V/cm
+
+#let I_mod_2 = 0.29 // in A
+
+#let delta_I = delta_U / U_mod * I_mod_2 / 2 * 2 * sqrt(2)
+
+#let factor = 4
+
+#let delta_B0 = delta_I
+Abgelesene halbwertsbreite:
+
+$delta U = #delta_U "V"$
+
+$delta I = #round(delta_I, digits: 3) "A"$
+
+$delta B_0 = #round(delta_I * 4.23, digits: 2) "mT"$
+
 Slope: #round(lin_fit.first(), digits: 2) $"MHz"/"mT"$
-
-
 
 #let gfactor = (6.625e-34 / 9.273e-24 * lin_fit.first() * 1e9)
 
@@ -402,5 +406,7 @@ Gfactor:
 $g = #round(gfactor, digits: 4)$
 
 from literature:
+
 $g = 2,0036$
+
 == Data
