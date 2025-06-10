@@ -13,6 +13,7 @@
 
 #set heading(numbering: "1.1")
 
+
 = Resonanceabsorbtion of a passive HF-Osscilator
 
 == Setup
@@ -194,13 +195,55 @@
 
 Es konnte ebenso die Messreihe mit keinem passiven nicht durchgeführt werden!
 
-#figure(lq.diagram(
-  width: 12cm,
-  height: 8cm,
-  lq.plot(color: blue, mark: lq.marks.o, freq_3_6, U2_3_6),
-  lq.plot(color: orange, mark: lq.marks.o, freq_2_6, U2_2_6),
-  lq.plot(color: purple, mark: lq.marks.o, freq_1_6, U2_1_6),
-))
+#show lq.selector(lq.legend): set text(1em)
+#show lq.selector(lq.title): set text(1.5em)
+
+#figure(
+  caption: [The resonance frequencies $f_n$ can be determined by measuring voltage peaks in the passive coil voltage $U_2(f)$. The measurement apparatus for the current through the active coil was broken. Thus, the active voltage $U_1(f)$ couldn't be determined. It would usually correspond to a damped oscillation thus creating corresponding local minima in $U_1$ at the same resonace frequencies],
+  lq.diagram(
+    width: 12cm,
+    height: 8cm,
+    title: [],
+    ylabel: [Passive coil voltage $U_2$ in V],
+    xlabel: [Frequency $f$ in Hz],
+    lq.plot(
+      color: blue,
+      mark: lq.marks.o,
+      label: [Skt. = 3/6],
+      freq_3_6,
+      U2_3_6,
+    ),
+    lq.line(
+      (freq_3_6.at(U2_3_6.position(x => x == calc.max(..U2_3_6))), 0.6),
+      (freq_3_6.at(U2_3_6.position(x => x == calc.max(..U2_3_6))), 2.6),
+    ),
+    lq.place(30%, 10%, $f_1$),
+    lq.line(
+      (freq_2_6.at(U2_2_6.position(x => x == calc.max(..U2_2_6))), 0.6),
+      (freq_2_6.at(U2_2_6.position(x => x == calc.max(..U2_2_6))), 2.6),
+    ),
+    lq.place(50%, 30%, $f_2$),
+    lq.line(
+      (freq_1_6.at(U2_1_6.position(x => x == calc.max(..U2_1_6))), 0.6),
+      (freq_1_6.at(U2_1_6.position(x => x == calc.max(..U2_1_6))), 2.6),
+    ),
+    lq.place(80%, 60%, $f_3$),
+    lq.plot(
+      color: orange,
+      mark: lq.marks.o,
+      label: [Skt. = 2/6],
+      freq_2_6,
+      U2_2_6,
+    ),
+    lq.plot(
+      color: purple,
+      mark: lq.marks.o,
+      label: [Skt. = 1/6],
+      freq_1_6,
+      U2_1_6,
+    ),
+  ),
+)
 
 == Data
 
