@@ -10,6 +10,9 @@
   set page(paper: "a4")
   set text(lang: language, font: "New Computer Modern", size: 11pt)
 
+  set heading(numbering: "1.1")
+
+  set math.equation(numbering: "(1)")
   set align(center)
 
   image(width: 10cm, "assets/tuw_logo.jpg")
@@ -64,12 +67,9 @@
   set par(justify: true)
 
   counter(page).update(1)
-  set page(
-    numbering: "1",
-    header: [
-      #set align(center)
-      Laboratory Work III - #title],
-  )
+  set page(numbering: "1", header: [
+    #set align(center)
+    Laboratory Work III - #title])
 
   doc
 }
