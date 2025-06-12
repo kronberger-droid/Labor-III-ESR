@@ -1,6 +1,6 @@
 #import "lab-report.typ": lab-report
 #import "@preview/lilaq:0.3.0" as lq
-#import calc: ln, round, sqrt
+#import calc: ln, round
 #import "lib.typ": linear_fit
 
 #show: lab-report.with(
@@ -10,7 +10,6 @@
   groupnumber: "301",
   date: datetime(day: 4, month: 6, year: 2025),
 )
-
 
 #outline()
 
@@ -26,7 +25,7 @@ When the resonance condition for ESR is met at a frequency $ν_0$​, the DPPH s
 
 To detect this change, a passive resonant circuit is used for comparison. Its coil is placed coaxially opposite the empty RF coil. The resonance frequency of the passive circuit is given by:
 $
-  nu_0 = 1/(2 pi dot L_2 C_2)
+  nu_0 = 1/(2 pi dot sqrt(L_2 C_2))
 $
 Where $L_2$ and $C_2$ are the inductance and capacitance of the oscillation circuit.
 The resonance frequency of the circuit can be adjusted by changing the capacitance $C_2$​.
@@ -165,7 +164,6 @@ $
   lq.diagram(
     width: 12cm,
     height: 8cm,
-    title: [],
     ylabel: [Passive coil voltage $U_2$ in V],
     xlabel: [Frequency $nu$ in Hz],
     lq.line(
@@ -244,7 +242,7 @@ $
 = Electronspinresonance on DPPH
 
 == Fundamentals
-Electron spin resonance (ESR) detects transitions between spin states of unpaired electrons in a magnetic field $B_0$​. The energy levels split due to the Zeeman effect, and when electromagnetic radiation of the right frequency νν is applied, resonant absorption occurs.
+Electron spin resonance (ESR) detects transitions between spin states of unpaired electrons in a magnetic field $B_0$​. The energy levels split due to the Zeeman effect, and when electromagnetic radiation of the right frequency $nu$ is applied, resonant absorption occurs.
 
 This resonance condition is:
 $
@@ -255,29 +253,24 @@ Where $h$ is the planks constant, $nu$ is the radiation frequency, $g$ is the la
 
 From this, the magnetic field $B_0$​ can be calculated using:
 $
-  B_0 = h nu g μ_B
+  B_0 = (h nu) / (g μ_B) quad arrow quad g = nu/B_0 dot h / mu_B
 $
 
 For a free electron: $g = 2.0023$
 
-Spin quantum number: $J=s=1/2$
-
-ESR transition: $Delta m = J = plus.minus 1$
-
-The ESR line width $Delta B_0$ relates to level lifetime $Tau$ via the uncertainty relation:
+The magnetic field $B$ of the Helmholtz coils can be calculated from the current $I$ through each coil using the following formula:
 $
-  Delta B_0 = 1 / 2 g μ_B Tau
+  B = mu_0 dot (4 / 5)^(3/2) dot n / r dot I
+$
+where $mu_0 = 4 pi dot 10^(-7) "Vs"/"Am"$ is the vacuum permability, $n$ the number of turns per coil and $r$ the coil radius.
+
+For $n=320$ and $r=6.8 "cm"$ this yields:
+$
+  B = 4.23 "mT"/"A"⋅I
 $
 
 == Setup
-
-
-#let fig = figure(
-  image(width: 8cm, "assets/experimental_setup_2.png"),
-  caption: [Experimental setup for electron spin resonance #cite(<elektronenspinresonanz-2025>)],
-)
-
-
+\
 #grid(
   columns: (1fr, 1fr),
   column-gutter: 0.5cm,
@@ -294,11 +287,13 @@ $
       caption: [Arrangement of the Helmholtz coils and the ESR base unit, viewed from above. #cite(<elektronenspinresonanz-2025>)<test>],
     )<helmholz-coil>
   ],
-)
-
+)\
 - Place the Helmholtz coils parallel to each other at a center distance of 6.8 cm (equal to the mean radius $r$).
+
 - Connect both Helmholtz coils in series with the ammeter to the ESR operating unit.
+
 - Connect the ESR base unit to the ESR operating unit via a 6-pin cable.
+
 - Connect output Y of the ESR operating unit via a BNC cable to channel I of the dual-channel oscilloscope, and output X to channel II.
 
 == Procedure
@@ -310,28 +305,58 @@ A high-Q RF resonant circuit detects the absorption via a drop in voltage when r
 *Determination of the Resonance Magnetic Field $B_0$*
 
 - Insert the 30-75 MHz plug-in coil (medium) and place the DPPH sample in the coil.
-- Switch on the ESR base unit and position it so that the plug-in coil with DPPH sample is in the center of the Helmholtz-coil pair (see Fig. 4).
+
+- Switch on the ESR base unit and position it so that the plug-in coil with DPPH sample is in the center of the Helmholtz-coil pair (see @helmholz-coil).
+
 - Set the resonance frequency $nu = 30 "MHz"$.
+
 - Set the modulation amplitude $U_"mod"$ to the second scale division.
+
 - Set the phase shift to $0°$.
+
 - Operate the oscilloscope in dual-channel mode:
   - Dual on
+
   - Time base $2"ms"/"cm"$
+
   - Amplitude I and II $0.5 "V"/"mm"$ AC
-- Slowly increase the DC voltage $U_0$ to the Helmholtz coils until the resonance signals are equidistant (see Fig. 6).
-- Switch the oscilloscope to XY mode and adjust the phase shift so that the two resonance peaks coincide.
-- Vary $U_0$ until the resonance signal is symmetric, keeping the modulation voltage as low as possible.
+#grid(
+  columns: (1fr, 1fr),
+  column-gutter: 1cm,
+  align: horizon,
+  [
+    - Slowly increase the DC voltage $U_0$ to the Helmholtz coils until the resonance signals are equidistant.
+
+    - Switch the oscilloscope to XY mode and adjust the phase shift so that the two resonance peaks coincide.
+
+    - Vary $U_0$ until the resonance signal is symmetric, keeping the modulation voltage as low as possible. (see @resonance-signal)
+  ],
+  [
+    #figure(caption: [Equidistant resonance signal], image(
+      width: 6cm,
+      "assets/resonance_curve.jpeg",
+    ))<resonance-signal>
+  ],
+)
 - Measure the DC current $2 I_0$ through the Helmholtz-coil pair and record it together with the resonance frequency $nu$.
+
 - Increase $nu$ by $5 "MHz"$ and adjust $U_0$ to reestablish resonance.
+
 - Again measure and record the current $2 I_0$.
+
 - Continue raising $nu$ in 5 MHz steps (switch to the 75-130 MHz coil (small) at 75 MHz) and repeat the measurements.
 
 *Determination of the Half-Width $delta B_0$*
 - Operate the oscilloscope in XY mode:
+
   - Amplitude II $0.05 "V"/"mm" "AC"$
+
 - Reestablish the resonance condition for $nu = 50 "MHz"$ (medium plug-in coil).
+
 - Vary the modulation voltage $U_"mod"$ until the resonance trace spans the full screen width (10 cm) in the X-direction.
+
 - Switch the ammeter to AC mode and measure the effective current $2 I_"mod"$ corresponding to $U_"mod"$.
+
 - Increase the X-deflection, read off the width $Delta U$ of the resonance peak at half its height, and record it.
 
 
@@ -367,7 +392,7 @@ A high-Q RF resonant circuit detects the absorption via a drop in voltage when r
 
 #align(center)[
   #figure(
-    caption: [Current $2 I_0$ as a function of frequency $ν$ of the magnetic field],
+    caption: [Current $2 I_0$ at given frequency $ν$ of the magnetic field],
     table(
       columns: 6,
       table.header(
@@ -417,8 +442,10 @@ A high-Q RF resonant circuit detects the absorption via a drop in voltage when r
 
 #let lin_fit = linear_fit(B0, freq_B0)
 
-#let slope = round(lin_fit.first(), digits: 2)
-#let intercept = round(lin_fit.last(), digits: 2)
+#let slope = round(lin_fit.at(0), digits: 2)
+#let intercept = round(lin_fit.at(1), digits: 2)
+
+#let error = round(lin_fit.at(2), digits: 2)
 
 == Data analysis
 \
@@ -450,7 +477,7 @@ A high-Q RF resonant circuit detects the absorption via a drop in voltage when r
 
 #let I_mod_2 = 0.29 // in A
 
-#let delta_I = delta_U / U_mod * I_mod_2 / 2 * 2 * sqrt(2)
+#let delta_I = delta_U / U_mod * I_mod_2 / 2 * 2 * calc.sqrt(2)
 
 #let factor = 4
 
@@ -471,10 +498,10 @@ $
 
 the half-width of the magnetic field yields: $delta B_0 = #round(delta_I * 4.23, digits: 2) "mT"$
 
-
-Slope: #round(lin_fit.first(), digits: 2) $"MHz"/"mT"$
+Where the Literature value of $delta B_0 ("DPPH") = 0,15−0,81 "mT"$.
 
 #let gfactor = (6.625e-34 / 9.273e-24 * lin_fit.first() * 1e9)
+#let error = 6.625e-34 / 9.273e-24 * error
 
 In experiment determined g-factor:
 
@@ -487,9 +514,9 @@ $g = 2.0036$
 Despite a deviation from linearity in the higher frequency range when using the smallest coil, a linear relationship between resonance frequency and magnetic field strength is observed.
 Furthermore, the measured g-factor is in sufficient agreement with the literature value.
 
-== Error Estimation
+== Interpretation
 
-Since the voltage values were read from a oscilloscope, the error of these values is $plus.minus 0.1 space "V"$. Since the Current was measured by an amperemeter, the error for the current is $plus.minus 0.01 space "A"$.
+
 
 #pagebreak()
 
