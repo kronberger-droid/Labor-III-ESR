@@ -287,20 +287,16 @@ Where $h$ is the planks constant, $nu$ is the radiation frequency, $g$ is the la
 From this, the magnetic field $B_0$​ can be calculated using:
 $
   B_0 = (h nu) / (g mu_B) quad arrow quad g = nu/B_0 dot h / mu_B
-$<gfactor>
-
-For a free electron: $g = 2.0023$
+$<eq:gfactor>
 
 The magnetic field $B$ of the Helmholtz coils can be calculated from the current $I$ through each coil using the following formula:
 $
-  B = mu_0 dot (4 / 5)^(3/2) dot n / r dot I
+  B_0 = mu_0 dot (4 / 5)^(3/2) dot n / r dot I
 $
 where $mu_0 = 4 pi dot 10^(-7) "Vs"/"Am"$ is the vacuum permability, $n$ the number of turns per coil and $r$ the coil radius.
 
 For $n=320$ and $r=6.8 "cm"$ this yields:
-$
-  B = 4.23 "mT"/"A"⋅I
-$
+$ B_0 = 4.23 "mT"/"A"⋅I $<eq:magnetic-field>
 
 #cite(<elektronenspinresonanz-2025>)
 
@@ -314,13 +310,13 @@ $
     #figure(
       image(width: 8cm, "assets/experimental_setup_2.png"),
       caption: [Experimental setup for electron spin resonance #cite(<elektronenspinresonanz-2025>)],
-    )<experimental-setup>
+    )<fig:experimental-setup>
   ],
   [
     #figure(
       image(width: 3.6cm, "assets/experimental_setup_3.png"),
       caption: [Arrangement of the Helmholtz coils and the ESR base unit, viewed from above. #cite(<elektronenspinresonanz-2025>)<test>],
-    )<helmholz-coil>
+    )<fig:helmholz-coil>
   ],
 )\
 - Place the Helmholtz coils parallel to each other at a center distance of 6.8 cm (equal to the mean radius $r$).
@@ -343,7 +339,7 @@ A high-Q RF resonant circuit detects the absorption via a drop in voltage when r
 
 - Insert the 30-75 MHz plug-in coil (medium) and place the DPPH sample in the coil.
 
-- Switch on the ESR base unit and position it so that the plug-in coil with DPPH sample is in the center of the Helmholtz-coil pair (see @helmholz-coil).
+- Switch on the ESR base unit and position it so that the plug-in coil with DPPH sample is in the center of the Helmholtz-coil pair (see @fig:helmholz-coil).
 
 - Set the resonance frequency $nu = 30 "MHz"$.
 
@@ -385,7 +381,7 @@ A high-Q RF resonant circuit detects the absorption via a drop in voltage when r
 
 #cite(<elektronenspinresonanz-2025>)
 
-*Determination of the Half-Width $delta B_0$*
+*Determination of the full width at half maximum (FWHM) $delta B_0$*
 - Operate the oscilloscope in XY mode:
 
   - Amplitude II $0.05 "V"/"mm" "AC"$
@@ -450,6 +446,9 @@ A high-Q RF resonant circuit detects the absorption via a drop in voltage when r
   )
 ]
 
+Using @eq:magnetic-field the corresponding magnetic field for every current can be calculated, noting that the current values are in $2I_2$ resulting in an additional factor of $1/2$.
+This results in the values shown in @tab:magnetic-field:
+
 #let freq_B0 = get_freq(data_2)
 
 #let get_curr(data) = {
@@ -480,15 +479,27 @@ A high-Q RF resonant circuit detects the absorption via a drop in voltage when r
   )<tab:magnetic-field>
 ]
 
+
+
+#let delta_U = 1.9 * 0.5 // in cm * V/cm
+Measured voltage FWHM: $delta U = #delta_U space "V"$
+
+== Data analysis
+
 #let lin_fit = linear_fit(B0, freq_B0)
 
 #let slope = round(lin_fit.at(0), digits: 2)
 #let intercept = round(lin_fit.at(1), digits: 2)
 
-#let error = round(lin_fit.at(2), digits: 2)
+#let slope_error = round(lin_fit.at(2), digits: 2)
 
-== Data analysis
-\
+Using a simple linear-regression model a linear function can be fitted onto the values of the magnetic field, where the slope corresponds to $(Delta nu)/(Delta B_0)$ is in the linear case is equal to $nu/B_0$.
+Which will make it possible to use in @eq:gfactor to calculate the g-factor of the probe.
+
+The uncertainty introduced through the linear fit is around $plus.minus #slope_error "Mhz"/"mT"$, uncertainty of $I$ or $B_0$ measurement does not affect the g-factor, since we are purely using the fitted slope of $nu(B_0)$.
+Also even tho the intercept is expected to be 0, there might be miss calibrations which result in a y-shift of the curve, resulting in a non-zero intercept.
+This y-shift should not have any influence on the value of the slope.
+
 #figure(
   caption: [Resonance frequency as a function of the magnetic field for DPPH (see @tab:magnetic-field)],
   lq.diagram(
@@ -502,7 +513,7 @@ A high-Q RF resonant circuit detects the absorption via a drop in voltage when r
       color: blue,
       mark: none,
       stroke: 1.2pt,
-      label: [Linear fit: $nu(B_0) = #slope B_0 - #(-intercept)$],
+      label: [Linear fit: $nu(B_0) approx #round(slope) B_0 - #(-round(intercept))$],
       lq.linspace(B0.first(), B0.last()),
       lq
         .linspace(B0.first(), B0.last())
@@ -510,8 +521,6 @@ A high-Q RF resonant circuit detects the absorption via a drop in voltage when r
     ),
   ),
 )
-
-#let delta_U = 1.9 * 0.5 // in cm * V/cm
 
 #let U_mod = 10 * 0.5 // in cm * V/cm
 
@@ -523,37 +532,29 @@ A high-Q RF resonant circuit detects the absorption via a drop in voltage when r
 
 #let delta_B0 = delta_I
 
-Measured voltage half-width: $delta U = #delta_U space "V"$
+*FWHM calculation:*
 
-First using
+Using the FWHM of the voltage $U$ we can determine the FHWM of $B_0$ using the following equations:
 $
-  delta I = (delta U) / U_mod dot I_mod
-$
-the calculated current half-width yields: $delta I = #round(delta_I, digits: 3) "A"$
-
-Further using:
-$
-  delta B_0 = 4.23 "mT" dot delta I
+  delta B_0 = 4.23 "mT" dot delta I = 4.23 "mT" dot (delta U) / U_mod dot I_mod
 $
 
-the half-width of the magnetic field yields: $delta B_0 = #round(delta_I * 4.23, digits: 2) "mT"$
+thus the FWHM of the magnetic field yields:
+#align(center)[
+  $delta B_0 approx #round(delta_I * 4.23, digits: 2) "mT"$, compared to common values of $delta B_0 ("DPPH") = 0,15−0,81 "mT"$.
+]
 
-compared to the literature value of $delta B_0 ("DPPH") = 0,15−0,81 "mT"$.
+*g-factor calculation:*
 
 #let gfactor = (6.625e-34 / 9.273e-24 * lin_fit.first() * 1e9)
-#let error = 6.625e-34 / 9.273e-24 * error
+#let error = (6.625e-34 / 9.273e-24) * slope_error * 1e9
 
-In experiment determined g-factor using @gfactor:
+In experiment determined g-factor using @eq:gfactor combined with the slope of the linear fit:
+#align(center)[
+  $g = #round(gfactor, digits: 2) plus.minus #round(error, digits: 2)$ compared to the literature value of $g = 2.0036$
+]
 
-$g = #round(gfactor, digits: 2)$
-
-compared to the literature value of:
-
-$g = 2.0036$
-
-== Interpretation
-
-The linear relation $nu prop B_0$ confirms Zeeman splitting of DPPH electron spins. The extracted $g approx #round(gfactor, digits: 2)$ agrees well with the literature, and the measured field half‐width $delta B_0 approx #round(delta_I * 4.23, digits: 2)"mT"$ reflects intrinsic line broadening due to spin–spin relaxation and field inhomogeneities.
+The linear relation $nu prop B_0$ confirms Zeeman splitting of DPPH electron spins. The extracted $g = #round(gfactor, digits: 2) plus.minus #round(error, digits: 2)$ agrees well with the literature, and the measured field half‐width $delta B_0 approx #round(delta_I * 4.23, digits: 2)"mT"$ reflects intrinsic line broadening due to spin–spin relaxation and field inhomogeneities and lies in the range of expected values.
 
 #pagebreak()
 
