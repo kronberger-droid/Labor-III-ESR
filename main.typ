@@ -21,7 +21,7 @@
 
 To detect electron spin resonance (ESR) in DPPH, the DPPH sample is placed in an RF coil that is part of a resonant circuit with  high quality factor . This circuit is excited by a variable-frequency RF oscillator operating between 15 and 130 MHz.
 
-When the resonance condition for ESR is met at a frequency $ν_0$​, the DPPH sample absorbs energy, which loads the resonant circuit. As a result, the AC resistance increases, and the voltage across the RF coil decreases.
+When the resonance condition for ESR is met at a frequency $nu_0$​, the DPPH sample absorbs energy, which loads the resonant circuit. As a result, the AC resistance increases, and the voltage across the RF coil decreases.
 
 To detect this change, a passive resonant circuit is used for comparison. Its coil is placed coaxially opposite the empty RF coil. The resonance frequency of the passive circuit is given by:
 $
@@ -30,11 +30,14 @@ $
 Where $L_2$ and $C_2$ are the inductance and capacitance of the oscillation circuit.
 The resonance frequency of the circuit can be adjusted by changing the capacitance $C_2$​.
 
-When the active circuit is driven at its resonance frequency $ν_0$, it is dampened, and the voltage $U_1$​ across the RF coil decreases.
+When the active circuit is driven at its resonance frequency $nu_0$, it is dampened, and the voltage $U_1$​ across the RF coil decreases.
 The ESR signal is detected by measuring the rectified voltage $U_1$, which corresponds to the current $I_1$​ through a measurement resistor $R_1=56 space "k"Omega$:
 $
   U_1​= 56 space "k"Omega dot I_1​
 $
+
+#cite(<elektronenspinresonanz-2025>)
+
 == Setup
 
 #figure(
@@ -43,22 +46,40 @@ $
 )
 
 - Connect the ESR base unit to the ESR operating unit via a 6-pin cable and set the rotary potentiometer on the top left to maximum sensitivity.
+
 - Plug in the 13-30 MHz plug-in coil (large).
+
 - Due to a bad connection of the measurement cable of $I_1$ the current and voltage of the active circuit could not be measured.
+
 - Position the coil of the passive resonant circuit coaxially opposite of the active coil and connect via a BNC/4 mm measurement cable to channel I of the dual-channel oscilloscope.
+
+#cite(<elektronenspinresonanz-2025>)
 
 == Procedure
 
 - Set the variable capacitor of the passive resonant circuit to position Skt. = 3/6.
+
 - Adjust the minimum frequency on the ESR base unit.
+
 - At the operating frequency, measure and record:
+
   - the frequency,
+
   - the voltage $U_2$ of the “passive” coil on the oscilloscope,
+
 - Increase the frequency in steps and repeat the measurement.
+
 - Perform additional measurement series with Skt. = 2/6 and 1/6.
+
 - A measurement without the passive circuit could also not be done due to the bad connection of the active circuit cable.
 
+#cite(<elektronenspinresonanz-2025>)
+
 == Measurement values
+
+The active coil voltage $U_1(nu)$ could not be recorded, because the current measurement branch of the apparatus was broken during the time of the experiment.
+As a result, no data for $U_1$ were obtained, and only the passive coil voltage $U_2(nu)$ is available for analysis.
+This won't be hindering the determination of the resonance frequencies of the LC-Oscillator, since it can be read out of the $U_1$ dataset in isolation.
 
 #let data_3_6 = (
   //(freq, U2),
@@ -123,28 +144,34 @@ $
   let mid = int(round(data.len() / 2))
   let table_data = data.slice(0, -mid).zip(data.slice(mid))
 
-  align(center)[
-    #figure(caption: [#caption], table(
-      columns: 4,
-      align: center,
-      stroke: 0.8pt,
-      table.header([$nu$ / MHz], [$U_2$ / V], [$nu$ / MHz], [$U_2$ / V]),
-      ..for (.., (v, u2), (cont_v, cont_u2)) in table_data {
-        ([#v], [#u2], [#cont_v], [#cont_u2])
-      },
-    ))
-  ]
+  figure(caption: [#caption], table(
+    columns: 4,
+    align: center,
+    stroke: 0.8pt,
+    table.header([$nu$ / MHz], [$U_2$ / V], [$nu$ / MHz], [$U_2$ / V]),
+    ..for (.., (v, u2), (cont_v, cont_u2)) in table_data {
+      ([#v], [#u2], [#cont_v], [#cont_u2])
+    },
+  ))
 }
 
 #grid(
   columns: (1fr, 1fr),
   column-gutter: 0.5cm,
-  [#draw_table(data_3_6, [Voltage $U_2$ at Skt. = 3/6])],
-  [#draw_table(data_2_6, [Voltage $U_2$ at Skt. = 2/6])],
+  [#draw_table(
+      data_3_6,
+      [Measured voltage $U_2$ at fixed frequencies $nu$ at scale division 3/6],
+    )<tab:U2-3-6>],
+  [#draw_table(
+      data_2_6,
+      [Measured voltage $U_2$ at fixed frequencies $nu$ at scale division 2/6],
+    )<tab:U2-2-6>],
 )
 
-#draw_table(data_1_6, [Voltage $U_2$ at Skt. = 1/6])
-
+#draw_table(
+  data_1_6,
+  [Measured voltage $U_2$ at fixed frequencies $nu$ at scale division 1/6],
+)<tab:U2-1-6>
 #show lq.selector(lq.legend): set text(1em)
 #show lq.selector(lq.title): set text(1.5em)
 
@@ -158,8 +185,12 @@ $
 
 == Data analysis
 
+After the plotting of the Voltage data, peaks are identified for simplicity only using the maximum Voltage value of each dataset.
+This might introduce slight errors, since the actual peak could be situated slighty shifted on either side of the measured peak.
+To get a more accurate peak information peak finding methods could be used.
+
 #figure(
-  caption: [The resonance frequencies $nu_n$ can be determined by determining voltage peaks in the passive coil voltage $U_2(nu)$. The measurement apparatus for the current through the active coil was broken. Thus, the active voltage $U_1(nu)$ couldn't be determined. It would usually correspond to a damped oscillation thus creating corresponding local minima in $U_1$ at the same resonace frequencies],
+  caption: [Passive coil voltage $U(nu)$ vs frequency $nu$, with resonance frequencies $nu_(3\/6), nu_(2\/6) "and" nu_(1\/6)$ indicated by vertical lines. (see: @tab:U2-3-6 - @tab:U2-1-6)],
 
   lq.diagram(
     width: 12cm,
@@ -235,7 +266,9 @@ $
   ),
 )
 
-== Interpretation
+The measured $U_2(nu)$ curve exhibits three clear peaks at approximately 16 Hz, 19 Hz, and 25 Hz, which should align with the expected LC resonance modes $nu_(3\/6), nu_(2\/6) "and" nu_(1\/6)$.
+Each maximum marks a frequency at which energy oscillates most efficiently between the coil’s inductance and its capacitance.
+Between these resonances, the voltage falls off, reflecting the reduced impedance mismatch away from the natural oscillation frequencies.
 
 #pagebreak()
 
@@ -246,15 +279,15 @@ Electron spin resonance (ESR) detects transitions between spin states of unpaire
 
 This resonance condition is:
 $
-  h ν = g mu_B B_0
+  h nu = g mu_B B_0
 $
 
 Where $h$ is the planks constant, $nu$ is the radiation frequency, $g$ is the lande g-factor, $mu_B$ the Bohr magneton and $B_0$ the static magnetic field $B_0$.
 
 From this, the magnetic field $B_0$​ can be calculated using:
 $
-  B_0 = (h nu) / (g μ_B) quad arrow quad g = nu/B_0 dot h / mu_B
-$
+  B_0 = (h nu) / (g mu_B) quad arrow quad g = nu/B_0 dot h / mu_B
+$<gfactor>
 
 For a free electron: $g = 2.0023$
 
@@ -268,6 +301,8 @@ For $n=320$ and $r=6.8 "cm"$ this yields:
 $
   B = 4.23 "mT"/"A"⋅I
 $
+
+#cite(<elektronenspinresonanz-2025>)
 
 == Setup
 \
@@ -296,9 +331,11 @@ $
 
 - Connect output Y of the ESR operating unit via a BNC cable to channel I of the dual-channel oscilloscope, and output X to channel II.
 
+#cite(<elektronenspinresonanz-2025>)
+
 == Procedure
 
-DPPH is used as a stable free radical sample with $g approx 2$.
+2,2-diphenyl-1-picrylhydrazyl (DPPH) is used as a stable free radical sample.
 The magnetic field is generated by Helmholtz coils and modulated at 50 Hz.
 A high-Q RF resonant circuit detects the absorption via a drop in voltage when resonance occurs.
 
@@ -332,8 +369,8 @@ A high-Q RF resonant circuit detects the absorption via a drop in voltage when r
     - Vary $U_0$ until the resonance signal is symmetric, keeping the modulation voltage as low as possible. (see @resonance-signal)
   ],
   [
-    #figure(caption: [Equidistant resonance signal], image(
-      width: 6cm,
+    #figure(caption: [Symmetric and equidistant resonance signal], image(
+      width: 5cm,
       "assets/resonance_curve.jpeg",
     ))<resonance-signal>
   ],
@@ -345,6 +382,8 @@ A high-Q RF resonant circuit detects the absorption via a drop in voltage when r
 - Again measure and record the current $2 I_0$.
 
 - Continue raising $nu$ in 5 MHz steps (switch to the 75-130 MHz coil (small) at 75 MHz) and repeat the measurements.
+
+#cite(<elektronenspinresonanz-2025>)
 
 *Determination of the Half-Width $delta B_0$*
 - Operate the oscilloscope in XY mode:
@@ -359,6 +398,7 @@ A high-Q RF resonant circuit detects the absorption via a drop in voltage when r
 
 - Increase the X-deflection, read off the width $Delta U$ of the resonance peak at half its height, and record it.
 
+#cite(<elektronenspinresonanz-2025>)
 
 == Measurement values
 
@@ -392,7 +432,7 @@ A high-Q RF resonant circuit detects the absorption via a drop in voltage when r
 
 #align(center)[
   #figure(
-    caption: [Current $2 I_0$ at given frequency $ν$ of the magnetic field],
+    caption: [Current $2 I_0$ at given frequency $nu$ of the magnetic field],
     table(
       columns: 6,
       table.header(
@@ -437,7 +477,7 @@ A high-Q RF resonant circuit detects the absorption via a drop in voltage when r
         ([#v], [#b0], [#cont_v], [#cont_b0])
       },
     ),
-  )
+  )<tab:magnetic-field>
 ]
 
 #let lin_fit = linear_fit(B0, freq_B0)
@@ -450,10 +490,10 @@ A high-Q RF resonant circuit detects the absorption via a drop in voltage when r
 == Data analysis
 \
 #figure(
-  caption: [Resonance frequency as a function of the magnetic field for DPPH],
+  caption: [Resonance frequency as a function of the magnetic field for DPPH (see @tab:magnetic-field)],
   lq.diagram(
-    width: 12cm,
-    height: 8cm,
+    width: 10cm,
+    height: 6cm,
     xlabel: [Magnetic field for DPPH $B_0$],
     ylabel: [Resonance frequency $nu_0(B)$],
     ylim: (25, 140),
@@ -498,25 +538,22 @@ $
 
 the half-width of the magnetic field yields: $delta B_0 = #round(delta_I * 4.23, digits: 2) "mT"$
 
-Where the Literature value of $delta B_0 ("DPPH") = 0,15−0,81 "mT"$.
+compared to the literature value of $delta B_0 ("DPPH") = 0,15−0,81 "mT"$.
 
 #let gfactor = (6.625e-34 / 9.273e-24 * lin_fit.first() * 1e9)
 #let error = 6.625e-34 / 9.273e-24 * error
 
-In experiment determined g-factor:
+In experiment determined g-factor using @gfactor:
 
-$g = #round(gfactor, digits: 4)$
+$g = #round(gfactor, digits: 2)$
 
-g-factor from literature:
+compared to the literature value of:
 
 $g = 2.0036$
 
-Despite a deviation from linearity in the higher frequency range when using the smallest coil, a linear relationship between resonance frequency and magnetic field strength is observed.
-Furthermore, the measured g-factor is in sufficient agreement with the literature value.
-
 == Interpretation
 
-
+The linear relation $nu prop B_0$ confirms Zeeman splitting of DPPH electron spins. The extracted $g approx #round(gfactor, digits: 2)$ agrees well with the literature, and the measured field half‐width $delta B_0 approx #round(delta_I * 4.23, digits: 2)"mT"$ reflects intrinsic line broadening due to spin–spin relaxation and field inhomogeneities.
 
 #pagebreak()
 
